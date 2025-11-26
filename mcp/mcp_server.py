@@ -80,7 +80,7 @@ async def chat_with_afa2(message: str) -> dict:
     headers = dict(get_http_headers())
     print("Request Headers:", headers)
 
-    session_id = headers.get("X-Session-ID", str(uuid.uuid4()))
+    session_id = headers.get("x-session-id", str(uuid.uuid4()))
 
     if session_id not in SEEN_SESSIONS:
         await init_session(session_id, access_token)

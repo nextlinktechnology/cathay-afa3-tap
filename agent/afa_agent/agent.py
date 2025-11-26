@@ -1,16 +1,22 @@
 import os
 
 from google.adk import Agent
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StreamableHTTPConnectionParams
+from google.adk.agents import InvocationContext
+from google.adk.tools.mcp_tool.mcp_toolset import StreamableHTTPConnectionParams, McpToolset
 
 mcp_url = os.getenv("mcp_url", "http://localhost:8082/mcp")
 print(f"mcp url {mcp_url}")
 
-mcp_toolset = MCPToolset(
+
+def get_header(context: InvocationContext):
+    return {'x-session-id': context.session.id}
+
+
+mcp_toolset = McpToolset(
     connection_params=StreamableHTTPConnectionParams(
         url=mcp_url,
     ),
-    header_provider=lambda ctx: {'User-ID': 'user12345'}
+    header_provider=get_header
 )
 
 afa2_instruction = """
