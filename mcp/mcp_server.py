@@ -1,7 +1,9 @@
+import uuid
 from typing import Any
 
 import httpx
 from fastmcp import FastMCP
+from fastmcp.server.dependencies import get_http_headers
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
 
@@ -25,14 +27,11 @@ def get_access_token(sa_key_file):
     return credentials.token
 
 
-access_token = get_access_token(SERVICE_ACCOUNT_PATH)
-
-
 def get_detect_intent_url(session_id):
     return f"https://dialogflow.googleapis.com/v3/projects/{PROJECT_ID}/locations/{LOCATION}/agents/{AGENT_ID}/sessions/{session_id}:detectIntent"
 
 
-async def make_afa2_request(session_id: str, message: str) -> dict[str, Any] | None:
+async def make_afa2_request(session_id: str, message: str, access_token) -> dict[str, Any] | None:
     url = get_detect_intent_url(session_id)
     payload = {
         "queryInput": {
@@ -40,6 +39,7 @@ async def make_afa2_request(session_id: str, message: str) -> dict[str, Any] | N
             "languageCode": LANGUAGE_CODE
         }
     }
+
     headers = {
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json"
@@ -69,23 +69,34 @@ def concat_all_messages(messages):
         return None
 
 
-async def init_session(session_id):
-    await make_afa2_request(session_id, "你好")
+async def init_session(session_id, access_token):
+    await make_afa2_request(session_id, "你好", access_token)
     print(f"init session: {session_id}")
 
 
 @server.tool()
-async def chat_with_afa2(session_id: str, message: str) -> dict:
+async def chat_with_afa2(message: str) -> dict:
+    access_token = get_access_token(SERVICE_ACCOUNT_PATH)
+    headers = dict(get_http_headers())
+    print("Request Headers:", headers)
+
+    session_id = headers.get("X-Session-ID", str(uuid.uuid4()))
+
     if session_id not in SEEN_SESSIONS:
-        await init_session(session_id)
+        await init_session(session_id, access_token)
         SEEN_SESSIONS.add(session_id)
 
     print(f"input message: {message}")
-    resp_json = await make_afa2_request(session_id, message)
+
+    resp_json = await make_afa2_request(session_id, message, access_token)
+
     print(f"session id {session_id} get response:")
     print(resp_json)
+
     resp_massages = resp_json.get("queryResult", {}).get("responseMessages", [])
     resp_message = concat_all_messages(resp_massages)
+
+    print(resp_message)
 
     return {
         "afa_response": resp_message
