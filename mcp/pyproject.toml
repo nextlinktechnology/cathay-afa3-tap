@@ -1,0 +1,12 @@
+[project]
+name = "cube-credit-card-mcp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.121.3",
+    "fastmcp>=2.13.1",
+    "httpx>=0.28.1",
+    "google-auth==2.43.0"
+]
