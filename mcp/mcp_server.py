@@ -99,7 +99,7 @@ async def chat_with_afa2(message: str) -> dict:
     print(resp_message)
 
     return {
-        "afa_response": resp_message
+        "response": resp_message
     }
 
 
