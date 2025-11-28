@@ -6,6 +6,11 @@
 - uv 
 - Access to an LLM and API Key
 
+## install adk
+```
+pip intall google-adk
+```
+
 ## add .env under the dir `agent`
 ```
 GOOGLE_API_KEY=

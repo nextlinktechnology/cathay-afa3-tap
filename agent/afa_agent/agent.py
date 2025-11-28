@@ -67,7 +67,7 @@ Answer any questions ih zh-tw.
 
 root_agent = Agent(
     name='afa_agent',
-    model='gemini-2.5-flash-lite',
+    model='gemini-2.5-pro',
     description=('Agent to provide Cathay information to user.'),
     instruction=afa2_instruction,
     tools=[mcp_toolset],
