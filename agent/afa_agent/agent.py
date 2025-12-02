@@ -33,14 +33,16 @@ def after_tool_callback(
 
 def after_agent_callback(callback_context: CallbackContext) -> Optional[types.Content]:
     state_dict = callback_context.state.to_dict()
-    print(state_dict)
+    print("invoked after agent callback")
     new_text = {
         "response": state_dict.get("response", None),
         "tool_name": state_dict.get("tool_name", None),
         "data": state_dict.get("data", None)
     }
 
-    json_new_text = json.dumps(new_text, ensure_ascii=False, indent=2)
+    json_new_text = json.dumps(new_text, ensure_ascii=False)
+
+    print(json_new_text)
 
     return types.Content(
         role="model",

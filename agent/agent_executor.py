@@ -111,6 +111,7 @@ class ADKAgentExecutor(AgentExecutor):
                             # Log or handle function calls if needed
                             pass  # Function calls are handled internally by ADK
 
+            print(f"agent return response text: {response_text}")
             # Add response as artifact with custom name
             await updater.add_artifact(
                 [Part(root=TextPart(text=response_text))],
